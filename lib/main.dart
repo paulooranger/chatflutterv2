@@ -15,12 +15,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chat Flutter Demo',
+      title: 'ChatFlutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Container(
-        child: const Text("data"),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Chat Flutter v2"),
+          centerTitle: true,
+          backgroundColor: Colors.indigoAccent,
+        ),
       ),
     );
   }
