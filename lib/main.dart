@@ -6,9 +6,13 @@ void main() async {
   runApp(MyApp());
   await Firebase.initializeApp();
   FirebaseFirestore.instance
-      .collection("col")
-      .doc("doc")
-      .set({"texto": "Paulo"});
+      .collection("mensagem")
+      .get()
+      .then((QuerySnapshot querySnapshot) {
+    for (var d in querySnapshot.docs) {
+      print(d.data);
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +27,7 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Chat Flutter v2"),
           centerTitle: true,
-          backgroundColor: Colors.indigoAccent,
+          backgroundColor: Colors.blue,
         ),
       ),
     );
