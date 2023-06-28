@@ -1,18 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chatflutterv2/chat_screen.dart';
 import 'package:flutter/material.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseFirestore.instance
-      .collection("mensagem")
-      .get()
-      .then((QuerySnapshot querySnapshot) {
-    for (var d in querySnapshot.docs) {
-      print(d.data);
-    }
-  });
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -21,15 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ChatFlutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Chat Flutter v2"),
-          centerTitle: true,
-          backgroundColor: Colors.blue,
-        ),
-      ),
+          primarySwatch: Colors.blue,
+          iconTheme: IconThemeData(color: Colors.blue)),
+      home: const ChatScreen(),
     );
   }
 }
