@@ -1,6 +1,6 @@
 //resolver bug organizando msg por id//
 
-
+//git
 import 'dart:io';
 
 import 'package:chatflutterv2/text_composer.dart';
