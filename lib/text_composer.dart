@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 // ignore: must_be_immutable
 class TextComposer extends StatefulWidget {
-  TextComposer(this.sendMessage, {super.key});
+  const TextComposer(this.sendMessage, {super.key});
 
   final Function({String? text, File? imgFile})? sendMessage;
 
@@ -27,7 +27,7 @@ class _TextComposerState extends State<TextComposer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: <Widget>[
           IconButton(

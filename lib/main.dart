@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'ChatFlutter Demo',
       theme: ThemeData(
           primarySwatch: Colors.blue,
-          iconTheme: IconThemeData(color: Colors.blue)),
+          iconTheme: const IconThemeData(color: Colors.blue)),
       home: const ChatScreen(),
     );
   }
