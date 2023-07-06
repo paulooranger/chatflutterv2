@@ -1,17 +1,15 @@
-//resolver bug organizando msg por id//
-
-//git
+import 'dart:async';
 import 'dart:io';
-
-import 'package:chatflutterv2/text_composer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'chat_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart' hide Action;
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'text_composer.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({Key? key}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -31,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  _getUser() async {
+  Future<User?> _getUser() async {
     if (_currentUser != null) return _currentUser;
 
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,12 +38,14 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await googleSignIn.signIn();
+
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount!.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken);
+
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
 
@@ -56,22 +56,21 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<void> _sendMessege({String? text, File? imgFile}) async {
+  Future<void> _sendMessage({String? text, File? imgFile}) async {
     final User? user = await _getUser();
+
     if (user == null) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-          ("Não foi possivel fazer o login. Tente novamente."),
-        ),
+        content: Text('Não foi possível fazer o login. Tente novamente.'),
         backgroundColor: Colors.red,
       ));
     }
 
     Map<String, dynamic> data = {
-      "uid": user!.uid,
-      "senderName": user.displayName,
-      "senderPhotoUrl": user.photoURL,
+      "uid": user?.uid,
+      "senderName": user?.displayName,
+      "senderPhotoUrl": user?.photoURL,
     };
 
     if (imgFile != null) {
@@ -82,11 +81,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
       TaskSnapshot taskSnapshot = await task;
       String url = await taskSnapshot.ref.getDownloadURL();
-      data['imgUrl'] = url;
+      data["imgUrl"] = url;
     }
 
-    if (text != null) data['text'] = text;
-    FirebaseFirestore.instance.collection("messages").add(data);
+    if (text != null) {
+      data['text'] = text;
+    }
+
+    FirebaseFirestore.instance.collection('messages').add(data);
   }
 
   @override
@@ -95,7 +97,6 @@ class _ChatScreenState extends State<ChatScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: const Text("Olá"),
-        centerTitle: true,
         elevation: 0,
       ),
       body: Column(
@@ -114,19 +115,24 @@ class _ChatScreenState extends State<ChatScreen> {
                   default:
                     List<DocumentSnapshot> documents =
                         snapshot.data!.docs.reversed.toList();
+
                     return ListView.builder(
-                        reverse: true,
-                        itemCount: documents.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(documents[index].get('text')),
-                          );
-                        });
+                      itemCount: documents.length,
+                      reverse: true,
+                      itemBuilder: (context, index) {
+                        return ChatMessage(
+                          documents[index].data() as Map<String, dynamic>,
+                          title: Text("ESATVA PEDINDO"),
+                        );
+                      },
+                    );
                 }
               },
             ),
           ),
-          TextComposer((_sendMessege)),
+          TextComposer(
+            sendMessage: _sendMessage,
+          ),
         ],
       ),
     );
